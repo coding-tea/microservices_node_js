@@ -3,7 +3,7 @@ const amqp = require('amqplib/callback_api');
 
 module.exports = {
     index : (req, res) => {
-        Product.find()-then((data) => {
+        Product.find().then((data) => {
             res.status(200).json({
                 success : true,
                 data : data
@@ -64,7 +64,7 @@ module.exports = {
     },
 
     update_price : (req, res) => {
-        Product.findById(product => {
+        Product.findById(req.params.id).then(product => {
             product.price = req.body.price
             product.save().then(() => {
                 res.status(200).json({
@@ -88,6 +88,32 @@ module.exports = {
     },
 
     AMQResponse : (req, res) => {
-        //
+        amqp.connect('amqp://localhost', (err, connection) => {
+            if(err) throw err;
+            var prices = [];
+            connection.createChannel((err, channel) => {
+                if(err) throw err;
+                channel.assertQueue('product', {durable:false});
+                channel.consume('product', message => {
+                    var products = message.content.toString().split('-');
+                    for(i=0; i<products.length; i++){
+                        Product.findById(products[i]).then((product) => {
+                            prices.push(product.prixUnitaire);
+                        });
+                    }
+                });
+                console.log('products id reserved successfuly...');
+            });
+            connection.createChannel((err, channel) => {
+                if(err) throw err;
+                channel.assertQueue('order', {durable:false});
+                var total = prices.reduce((prev, next) => parseInt(prev) + parseInt(next));
+                channel.sendToQueue('order', Buffer.from(total));
+                console.log('total sent successfuly...');
+                setTimeout(() => {
+                    channel.close();
+                }, 1000);
+            });
+        });
     }
 };
