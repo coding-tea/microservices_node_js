@@ -93,8 +93,8 @@ module.exports = {
             var prices = [];
             connection.createChannel((err, channel) => {
                 if(err) throw err;
-                channel.assertQueue('order', {durable:false});
-                channel.consume('order', message => {
+                channel.assertQueue('product', {durable:false});
+                channel.consume('product', (message) => {
                     var products = message.content.toString().split('-');
                     for(i=0; i<products.length; i++){
                         Product.findById(products[i]).then((product) => {
@@ -106,9 +106,9 @@ module.exports = {
             });
             connection.createChannel((err, channel) => {
                 if(err) throw err;
-                channel.assertQueue('product', {durable:false});
+                channel.assertQueue('order', {durable:false});
                 var total = prices.reduce((prev, next) => parseInt(prev) + parseInt(next));
-                channel.sendToQueue('product', Buffer.from(total));
+                channel.sendToQueue('order', Buffer.from(total));
                 console.log('total sent successfuly...');
                 setTimeout(() => {
                     channel.close();
