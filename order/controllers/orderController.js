@@ -50,6 +50,9 @@ module.exports = {
                     });
                 });
             });
+            setTimeout(() => {
+                connection.close();
+            }, 1000);
         });
     }
 

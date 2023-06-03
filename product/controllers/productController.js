@@ -110,10 +110,10 @@ module.exports = {
                 var total = prices.reduce((prev, next) => parseInt(prev) + parseInt(next));
                 channel.sendToQueue('order', Buffer.from(total));
                 console.log('total sent successfuly...');
-                setTimeout(() => {
-                    channel.close();
-                }, 1000);
             });
+            setTimeout(() => {
+                connection.close();
+            }, 1000);
         });
     }
 };
