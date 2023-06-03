@@ -98,17 +98,24 @@ module.exports = {
                     var products = message.content.toString().split('-');
                     for(i=0; i<products.length; i++){
                         Product.findById(products[i]).then((product) => {
-                            prices.push(product.prixUnitaire);
+                            prices.push(product.price);
                         });
                     }
+                    console.log('products id reserved successfuly...');
+                    channel.ack(message);
+                    //channel.close();
                 });
-                console.log('products id reserved successfuly...');
+                
             });
             connection.createChannel((err, channel) => {
                 if(err) throw err;
+                if(prices.length > 0)
+                    var total = prices.reduce((prev, next) => parseInt(prev) + parseInt(next));
+                else
+                    var total = 'hello world';
                 channel.assertQueue('order', {durable:false});
-                var total = prices.reduce((prev, next) => parseInt(prev) + parseInt(next));
                 channel.sendToQueue('order', Buffer.from(total));
+                res.json({message : 'product work done', total : total});
                 console.log('total sent successfuly...');
             });
             setTimeout(() => {

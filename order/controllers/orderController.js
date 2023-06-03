@@ -25,13 +25,14 @@ module.exports = {
                 if(err) throw err;
                 channel.assertQueue('product', {durable:false});
                 channel.sendToQueue('product', Buffer.from(orders_id));
-                console.Console('orders_id se')
+                console.log('orders_id se');
             });
             connection.createChannel((err, channel) => {
                 if(err) throw err;
-                channel.assertQueue('order', {durable : false});
-                channel.consume('order', msg => {
-                    var total = msg.content.toString();
+                channel.assertQueue('order', {durable:false});
+                channel.consume('order', message => {
+                    var total = message.content.toString();
+                    console.log('total set');
                     var new_order = new Order({
                         products : orders_id_to_save,
                         total : total
@@ -48,7 +49,10 @@ module.exports = {
                             message : err
                         });
                     });
+                    res.json({message : 'order work done', total : total});
+                    channel.ack(message);
                 });
+                //channel.close();
             });
             setTimeout(() => {
                 connection.close();

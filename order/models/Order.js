@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Order = mongoose.model('order', {
     date : {
         type : Date,
-        default : new date()
+        default : Date.now()
     },
     products : Array,
     total : Number
