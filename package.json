@@ -1,0 +1,26 @@
+{
+  "name": "microservices_node_js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coding-tea/microservices_node_js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/coding-tea/microservices_node_js/issues"
+  },
+  "homepage": "https://github.com/coding-tea/microservices_node_js#readme",
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.1.3",
+    "express": "^4.18.2",
+    "mongoose": "^7.2.2",
+    "nodemon": "^2.0.22"
+  }
+}
